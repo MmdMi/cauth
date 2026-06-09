@@ -1,0 +1,7 @@
+build/
+docs/doxygen/
+Doxyfile
+*.o
+*.swp
+.vscode/
+.idea/
