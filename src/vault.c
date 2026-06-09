@@ -53,7 +53,7 @@ static int ensure_vault_dir(void)
 /**
  * @brief Serialise vault entries into a plaintext byte buffer.
  *
- * Format: issuer\\taccount\\tsecret\\n  (one line per entry).
+ * Format: name\\tsecret\\n  (one line per entry).
  *
  * @param vault   Source vault.
  * @param out     Output buffer (allocated, caller must free).
@@ -70,9 +70,8 @@ static int serialize(const Vault *vault, uint8_t **out, size_t *out_len)
     size_t pos = 0;
     for (size_t i = 0; i < vault->count; i++)
     {
-        int n = snprintf(buf + pos, cap - pos, "%s\t%s\t%s\n",
-                         vault->entries[i].issuer,
-                         vault->entries[i].account,
+        int n = snprintf(buf + pos, cap - pos, "%s\t%s\n",
+                         vault->entries[i].name,
                          vault->entries[i].secret);
         if (n < 0)
         {
@@ -90,9 +89,8 @@ static int serialize(const Vault *vault, uint8_t **out, size_t *out_len)
                 return -1;
             }
             buf = tmp;
-            n = snprintf(buf + pos, cap - pos, "%s\t%s\t%s\n",
-                         vault->entries[i].issuer,
-                         vault->entries[i].account,
+            n = snprintf(buf + pos, cap - pos, "%s\t%s\n",
+                         vault->entries[i].name,
                          vault->entries[i].secret);
             if (n < 0)
             {
@@ -134,25 +132,17 @@ static int deserialize(const uint8_t *data, size_t data_len, Vault *vault)
             if (!line)
                 return -1;
 
-            char *tab1 = strchr(line, '\t');
-            if (!tab1)
+            char *tab = strchr(line, '\t');
+            if (!tab)
             {
                 free(line);
                 p = line_end + 1;
                 continue;
             }
-            *tab1 = '\0';
-            char *tab2 = strchr(tab1 + 1, '\t');
-            if (!tab2)
-            {
-                free(line);
-                p = line_end + 1;
-                continue;
-            }
-            *tab2 = '\0';
-            char *secret = tab2 + 1;
+            *tab = '\0';
+            char *secret = tab + 1;
 
-            vault_add(vault, line, tab1 + 1, secret);
+            vault_add(vault, line, secret);
             free(line);
         }
 
@@ -173,8 +163,7 @@ void vault_free(Vault *vault)
 {
     for (size_t i = 0; i < vault->count; i++)
     {
-        free(vault->entries[i].issuer);
-        free(vault->entries[i].account);
+        free(vault->entries[i].name);
         memzero(vault->entries[i].secret, strlen(vault->entries[i].secret));
         free(vault->entries[i].secret);
     }
@@ -184,12 +173,12 @@ void vault_free(Vault *vault)
     vault->capacity = 0;
 }
 
-int vault_add(Vault *vault, const char *issuer, const char *account, const char *secret)
+int vault_add(Vault *vault, const char *name, const char *secret)
 {
-    if (!vault || !issuer || !account || !secret)
+    if (!vault || !name || !secret)
         return -1;
 
-    if (vault_find(vault, issuer, account))
+    if (vault_find(vault, name))
         return -1;
 
     if (vault->count >= vault->capacity)
@@ -202,15 +191,12 @@ int vault_add(Vault *vault, const char *issuer, const char *account, const char 
         vault->capacity = new_cap;
     }
 
-    vault->entries[vault->count].issuer = strdup(issuer);
-    vault->entries[vault->count].account = strdup(account);
+    vault->entries[vault->count].name = strdup(name);
     vault->entries[vault->count].secret = strdup(secret);
-    if (!vault->entries[vault->count].issuer ||
-        !vault->entries[vault->count].account ||
+    if (!vault->entries[vault->count].name ||
         !vault->entries[vault->count].secret)
     {
-        free(vault->entries[vault->count].issuer);
-        free(vault->entries[vault->count].account);
+        free(vault->entries[vault->count].name);
         free(vault->entries[vault->count].secret);
         return -1;
     }
@@ -219,18 +205,16 @@ int vault_add(Vault *vault, const char *issuer, const char *account, const char 
     return 0;
 }
 
-int vault_remove(Vault *vault, const char *issuer, const char *account)
+int vault_remove(Vault *vault, const char *name)
 {
-    if (!vault || !issuer || !account)
+    if (!vault || !name)
         return -1;
 
     for (size_t i = 0; i < vault->count; i++)
     {
-        if (strcmp(vault->entries[i].issuer, issuer) == 0 &&
-            strcmp(vault->entries[i].account, account) == 0)
+        if (strcmp(vault->entries[i].name, name) == 0)
         {
-            free(vault->entries[i].issuer);
-            free(vault->entries[i].account);
+            free(vault->entries[i].name);
             memzero(vault->entries[i].secret, strlen(vault->entries[i].secret));
             free(vault->entries[i].secret);
 
@@ -245,15 +229,14 @@ int vault_remove(Vault *vault, const char *issuer, const char *account)
     return -1;
 }
 
-VaultEntry *vault_find(const Vault *vault, const char *issuer, const char *account)
+VaultEntry *vault_find(const Vault *vault, const char *name)
 {
-    if (!vault || !issuer || !account)
+    if (!vault || !name)
         return NULL;
 
     for (size_t i = 0; i < vault->count; i++)
     {
-        if (strcmp(vault->entries[i].issuer, issuer) == 0 &&
-            strcmp(vault->entries[i].account, account) == 0)
+        if (strcmp(vault->entries[i].name, name) == 0)
         {
             return &vault->entries[i];
         }

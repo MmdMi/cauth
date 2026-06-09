@@ -31,7 +31,7 @@
 
 Entries in the plaintext are stored as:
 ```
-issuer\taccount\tsecret\n
+name\tsecret\n
 ```
 
 ## Memory Management Strategy

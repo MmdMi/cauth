@@ -36,4 +36,4 @@ Vault file: `~/.config/cauth/vault.dat`
 
 - Encrypted with AES-256-GCM
 - Key derived from Master Password via PBKDF2
-- Each entry: `issuer:account\tsecret` (JSON in future)
+- Each entry: `name\tsecret`

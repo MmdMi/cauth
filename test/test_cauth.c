@@ -139,24 +139,24 @@ static void test_vault_operations(void)
     vault_init(&vault);
     ASSERT(vault.count == 0, "vault should be empty");
 
-    ASSERT(vault_add(&vault, "GitHub", "user@example.com", "JBSWY3DPEHPK3PXP") == 0,
+    ASSERT(vault_add(&vault, "GitHub", "JBSWY3DPEHPK3PXP") == 0,
            "add failed");
-    ASSERT(vault_add(&vault, "Google", "user@gmail.com", "GEZDGNBVGY3TQOJQ") == 0,
+    ASSERT(vault_add(&vault, "Google", "GEZDGNBVGY3TQOJQ") == 0,
            "add failed");
     ASSERT(vault.count == 2, "vault should have 2 entries");
 
-    ASSERT(vault_find(&vault, "GitHub", "user@example.com") != NULL,
+    ASSERT(vault_find(&vault, "GitHub") != NULL,
            "find GitHub failed");
-    ASSERT(vault_find(&vault, "Nonexistent", "x") == NULL,
+    ASSERT(vault_find(&vault, "Nonexistent") == NULL,
            "find nonexistent should return NULL");
 
-    ASSERT(vault_add(&vault, "GitHub", "user@example.com", "x") != 0,
+    ASSERT(vault_add(&vault, "GitHub", "x") != 0,
            "duplicate add should fail");
 
-    ASSERT(vault_remove(&vault, "GitHub", "user@example.com") == 0,
+    ASSERT(vault_remove(&vault, "GitHub") == 0,
            "remove failed");
     ASSERT(vault.count == 1, "vault should have 1 entry after remove");
-    ASSERT(vault_find(&vault, "GitHub", "user@example.com") == NULL,
+    ASSERT(vault_find(&vault, "GitHub") == NULL,
            "removed entry should not be found");
 
     vault_free(&vault);

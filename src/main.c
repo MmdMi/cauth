@@ -54,10 +54,10 @@ static void print_usage(void)
     fprintf(stderr,
         "Usage:\n"
         "  cauth init                   Create a new encrypted vault\n"
-        "  cauth add <issuer> <account> <secret>   Add an account\n"
-        "  cauth list                   List all accounts\n"
-        "  cauth show [--once] <issuer> <account>  Show TOTP (realtime, or --once for one-shot)\n"
-        "  cauth remove <issuer> <account>         Remove an account\n");
+        "  cauth add <name> <secret>               Add an account\n"
+        "  cauth list                              List all accounts\n"
+        "  cauth show [--once] <name>              Show TOTP (realtime, or --once for one-shot)\n"
+        "  cauth remove <name>                     Remove an account\n");
 }
 
 static int cmd_init(void)
@@ -94,9 +94,9 @@ static int cmd_init(void)
 
 static int cmd_add(int argc, char **argv)
 {
-    if (argc < 5)
+    if (argc < 4)
     {
-        fprintf(stderr, "Usage: cauth add <issuer> <account> <secret>\n");
+        fprintf(stderr, "Usage: cauth add <name> <secret>\n");
         return 1;
     }
 
@@ -112,7 +112,7 @@ static int cmd_add(int argc, char **argv)
         return 1;
     }
 
-    if (vault_add(&vault, argv[2], argv[3], argv[4]) != 0)
+    if (vault_add(&vault, argv[2], argv[3]) != 0)
     {
         fprintf(stderr, "Error: account already exists or invalid\n");
         memzero(pw, sizeof(pw));
@@ -156,12 +156,11 @@ static int cmd_list(void)
     }
     else
     {
-        printf("%-20s %-20s\n", "Issuer", "Account");
-        printf("%-20s %-20s\n", "------", "-------");
+        printf("%-20s\n", "Name");
+        printf("%-20s\n", "----");
         for (size_t i = 0; i < vault.count; i++)
-            printf("%-20s %-20s\n",
-                   vault.entries[i].issuer,
-                   vault.entries[i].account);
+            printf("%-20s\n",
+                   vault.entries[i].name);
     }
 
     vault_free(&vault);
@@ -171,17 +170,17 @@ static int cmd_list(void)
 static int cmd_show(int argc, char **argv)
 {
     int once = 0;
-    int issuer_idx = 2;
+    int name_idx = 2;
 
     if (argc > 2 && strcmp(argv[2], "--once") == 0)
     {
         once = 1;
-        issuer_idx = 3;
+        name_idx = 3;
     }
 
-    if (argc < issuer_idx + 2)
+    if (argc < name_idx + 1)
     {
-        fprintf(stderr, "Usage: cauth show [--once] <issuer> <account>\n");
+        fprintf(stderr, "Usage: cauth show [--once] <name>\n");
         return 1;
     }
 
@@ -199,7 +198,7 @@ static int cmd_show(int argc, char **argv)
 
     memzero(pw, sizeof(pw));
 
-    VaultEntry *entry = vault_find(&vault, argv[issuer_idx], argv[issuer_idx + 1]);
+    VaultEntry *entry = vault_find(&vault, argv[name_idx]);
     if (!entry)
     {
         fprintf(stderr, "Error: account not found\n");
@@ -257,9 +256,9 @@ static int cmd_show(int argc, char **argv)
 
 static int cmd_remove(int argc, char **argv)
 {
-    if (argc < 4)
+    if (argc < 3)
     {
-        fprintf(stderr, "Usage: cauth remove <issuer> <account>\n");
+        fprintf(stderr, "Usage: cauth remove <name>\n");
         return 1;
     }
 
@@ -275,7 +274,7 @@ static int cmd_remove(int argc, char **argv)
         return 1;
     }
 
-    if (vault_remove(&vault, argv[2], argv[3]) != 0)
+    if (vault_remove(&vault, argv[2]) != 0)
     {
         fprintf(stderr, "Error: account not found\n");
         memzero(pw, sizeof(pw));

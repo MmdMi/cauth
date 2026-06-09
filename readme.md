@@ -50,13 +50,13 @@ Creates a new encrypted vault at `~/.config/cauth/vault.dat`. You are prompted f
 ### Add an account
 
 ```sh
-cauth add <issuer> <account> <base32_secret>
+cauth add <name> <base32_secret>
 ```
 
 Example:
 
 ```sh
-cauth add GitHub user@example.com JBSWY3DPEHPK3PXP
+cauth add GitHub JBSWY3DPEHPK3PXP
 ```
 
 ### List accounts
@@ -65,12 +65,12 @@ cauth add GitHub user@example.com JBSWY3DPEHPK3PXP
 cauth list
 ```
 
-Prints all stored issuer/account pairs (secrets are never displayed).
+Prints all stored account names (secrets are never displayed).
 
 ### Show TOTP token
 
 ```sh
-cauth show [--once] <issuer> <account>
+cauth show [--once] <name>
 ```
 
 Displays a **live countdown** with the token and a progress bar, updating every second. Press `Ctrl+C` to exit.
@@ -82,7 +82,7 @@ Displays a **live countdown** with the token and a progress bar, updating every 
 Use `--once` for a single snapshot (or when piping stdout to another command):
 
 ```sh
-cauth show --once GitHub user@example.com
+cauth show --once GitHub
 ```
 
 Output: `654709  (15s left)`
@@ -90,7 +90,7 @@ Output: `654709  (15s left)`
 ### Remove an account
 
 ```sh
-cauth remove <issuer> <account>
+cauth remove <name>
 ```
 
 ## High-Level Architecture

@@ -11,9 +11,8 @@
  * @brief A single vault entry.
  */
 typedef struct {
-    char *issuer;   /**< Service or issuer name (e.g. "GitHub"). */
-    char *account;  /**< Account identifier (e.g. email or username). */
-    char *secret;   /**< Base32-encoded secret key. */
+    char *name;    /**< Entry name (e.g. "GitHub"). */
+    char *secret;  /**< Base32-encoded secret key. */
 } VaultEntry;
 
 /**
@@ -42,35 +41,32 @@ void vault_free(Vault *vault);
 /**
  * @brief Add an entry to the vault.
  *
- * Duplicate (issuer + account) pairs are rejected.
+ * Duplicate names are rejected.
  *
- * @param vault   Target vault.
- * @param issuer  Issuer name.
- * @param account Account name.
- * @param secret  Base32-encoded secret.
- * @return 0 on success, -1 if the entry already exists or on allocation failure.
+ * @param vault  Target vault.
+ * @param name   Entry name.
+ * @param secret Base32-encoded secret.
+ * @return 0 on success, -1 if the name already exists or on allocation failure.
  */
-int vault_add(Vault *vault, const char *issuer, const char *account, const char *secret);
+int vault_add(Vault *vault, const char *name, const char *secret);
 
 /**
- * @brief Remove an entry identified by issuer + account.
+ * @brief Remove an entry by name.
  *
- * @param vault   Target vault.
- * @param issuer  Issuer name.
- * @param account Account name.
+ * @param vault Target vault.
+ * @param name  Entry name.
  * @return 0 on success, -1 if not found.
  */
-int vault_remove(Vault *vault, const char *issuer, const char *account);
+int vault_remove(Vault *vault, const char *name);
 
 /**
- * @brief Find an entry by issuer + account.
+ * @brief Find an entry by name.
  *
- * @param vault   Vault to search.
- * @param issuer  Issuer name.
- * @param account Account name.
+ * @param vault Vault to search.
+ * @param name  Entry name.
  * @return Pointer to the entry, or NULL if not found.
  */
-VaultEntry *vault_find(const Vault *vault, const char *issuer, const char *account);
+VaultEntry *vault_find(const Vault *vault, const char *name);
 
 /**
  * @brief Serialise and encrypt the vault to disk.
