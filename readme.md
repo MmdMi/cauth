@@ -27,6 +27,12 @@ cmake -S . -B build
 cmake --build build
 ```
 
+Or use the build script:
+
+```sh
+./build.sh
+```
+
 The binary `build/cauth` and test binary `build/test_cauth` are produced.
 
 ## Usage
