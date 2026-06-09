@@ -35,6 +35,10 @@ Or use the build script:
 
 The binary `build/cauth` and test binary `build/test_cauth` are produced.
 
+## Demo
+
+![cauth demo](docs/demo.gif)
+
 ## Usage
 
 All vault operations require the Master Password (input is hidden).
