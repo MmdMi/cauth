@@ -18,6 +18,9 @@ add_executable(cauth
 target_include_directories(cauth PRIVATE include)
 target_link_libraries(cauth PRIVATE OpenSSL::Crypto)
 
+target_compile_definitions(cauth PRIVATE
+    CAUTH_VERSION="${PROJECT_VERSION}"
+)
 target_compile_options(cauth PRIVATE
     -Wall -Wextra -Werror -O2 -fstack-protector-all
     -D_FORTIFY_SOURCE=2

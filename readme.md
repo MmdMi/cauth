@@ -93,6 +93,12 @@ Output: `654709  (15s left)`
 cauth remove <name>
 ```
 
+### Show version
+
+```sh
+cauth version
+```
+
 ## High-Level Architecture
 
 ```

@@ -57,7 +57,8 @@ static void print_usage(void)
         "  cauth add <name> <secret>               Add an account\n"
         "  cauth list                              List all accounts\n"
         "  cauth show [--once] <name>              Show TOTP (realtime, or --once for one-shot)\n"
-        "  cauth remove <name>                     Remove an account\n");
+        "  cauth remove <name>                     Remove an account\n"
+        "  cauth version                           Show version\n");
 }
 
 static int cmd_init(void)
@@ -254,6 +255,12 @@ static int cmd_show(int argc, char **argv)
     return 0;
 }
 
+static int cmd_version(void)
+{
+    printf("cauth " CAUTH_VERSION "\n");
+    return 0;
+}
+
 static int cmd_remove(int argc, char **argv)
 {
     if (argc < 3)
@@ -314,6 +321,8 @@ int main(int argc, char **argv)
         return cmd_show(argc, argv);
     else if (strcmp(argv[1], "remove") == 0)
         return cmd_remove(argc, argv);
+    else if (strcmp(argv[1], "version") == 0)
+        return cmd_version();
     else
     {
         print_usage();
