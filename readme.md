@@ -35,6 +35,14 @@ Or use the build script:
 
 The binary `build/cauth` and test binary `build/test_cauth` are produced.
 
+### Install
+
+```sh
+sudo ./install.sh              # install to /usr/local/bin
+./install.sh --prefix ~/.local # install to user-local bin
+./install.sh --uninstall       # remove installed binary
+```
+
 ## Demo
 
 ![cauth demo](docs/demo.gif)
