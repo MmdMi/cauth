@@ -22,6 +22,17 @@
  * @param buf_size Buffer size.
  * @return 0 on success, -1 on error.
  */
+static int get_vault_path(char *buf, size_t buf_size);
+
+int vault_exists(void)
+{
+    char path[512];
+    if (get_vault_path(path, sizeof(path)) != 0)
+        return -1;
+    struct stat st;
+    return stat(path, &st) == 0 ? 1 : 0;
+}
+
 static int get_vault_path(char *buf, size_t buf_size)
 {
     const char *home = getenv("HOME");

@@ -81,6 +81,12 @@ VaultEntry *vault_find(const Vault *vault, const char *name);
 int vault_save(const Vault *vault, const char *password);
 
 /**
+ * @brief Check if a vault file exists on disk.
+ * @return 1 if the vault file exists, 0 if not, -1 on error.
+ */
+int vault_exists(void);
+
+/**
  * @brief Read and decrypt the vault from disk.
  *
  * @param vault    Vault to populate (must be initialised first).

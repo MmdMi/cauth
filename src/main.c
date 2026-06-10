@@ -63,6 +63,24 @@ static void print_usage(void)
 
 static int cmd_init(void)
 {
+    int exists = vault_exists();
+    if (exists < 0)
+    {
+        fprintf(stderr, "Error: cannot determine vault status\n");
+        return 1;
+    }
+    if (exists)
+    {
+        fprintf(stderr, "Warning: a vault already exists. Overwrite? [y/N] ");
+        int c = getchar();
+        if (c != 'y' && c != 'Y')
+        {
+            fprintf(stderr, "Aborted\n");
+            return 1;
+        }
+        while (getchar() != '\n'); /* drain remainder */
+    }
+
     char pw1[256], pw2[256];
     read_password("Master Password: ", pw1, sizeof(pw1));
     read_password("Confirm: ", pw2, sizeof(pw2));

@@ -51,6 +51,8 @@ cauth init
 
 Creates a new encrypted vault at `~/.config/cauth/vault.dat`. You are prompted for a Master Password (confirmed once).
 
+If a vault already exists, a warning is shown and you must confirm (`y`/`Y`) before overwriting.
+
 ### Add an account
 
 ```sh
